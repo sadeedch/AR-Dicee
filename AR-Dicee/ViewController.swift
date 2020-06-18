@@ -20,29 +20,31 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the view's delegate
         sceneView.delegate = self
         
-        let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01)  // a six sided box with units in meters
-        let material = SCNMaterial()
-        material.diffuse.contents = UIColor.red
-        cube.materials = [material]
         
-        let node = SCNNode()
-        node.position = SCNVector3(x: 0, y: 0.1, z: -0.5)
-        node.geometry = cube
-        
-        sceneView.scene.rootNode.addChildNode(node)
+//        // create an AR moon
+//        let sphere = SCNSphere(radius: 0.2)
+//        let material = SCNMaterial()
+//        material.diffuse.contents = UIImage(named: "art.scnassets/moon.jpg")
+//        sphere.materials = [material]
+//
+//        let node = SCNNode()
+//        node.position = SCNVector3(x: 0, y: 0.1, z: -0.5)
+//        node.geometry = sphere
+//
+//        sceneView.scene.rootNode.addChildNode(node)
         sceneView.automaticallyUpdatesLighting = true
         
         
+
+        // Create a new scene
+        let diceScene = SCNScene(named: "art.scnassets/dice.scn")!
         
+        if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true) {
         
-//        // Show statistics su ch as fps and timing information
-//        sceneView.showsStatistics = true
-//
-//        // Create a new scene
-//        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-//
-//        // Set the scene to the view
-//        sceneView.scene = scene
+        diceNode.position = SCNVector3(x: 0, y: 0, z: -0.1)
+        sceneView.scene.rootNode.addChildNode(diceNode)
+
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
