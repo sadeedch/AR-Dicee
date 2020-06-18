@@ -11,6 +11,8 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
+    
+    var diceArray = [SCNNode]()
 
     @IBOutlet var sceneView: ARSCNView!
     
@@ -85,22 +87,58 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                         y: hitResult.worldTransform.columns.3.y + diceNode.boundingSphere.radius,
                         z: hitResult.worldTransform.columns.3.z
                         )
-                    sceneView.scene.rootNode.addChildNode(diceNode)
-                
-                    // animate to roll and show the random value of dice
-                    let randomX = Float(arc4random_uniform(4) + 1) * (Float.pi/2)
-                    let randomZ = Float(arc4random_uniform(4) + 1) * (Float.pi/2)
                     
-                    diceNode.runAction(SCNAction.rotateBy(
-                        x: CGFloat(randomX),
-                        y: 0,
-                        z: CGFloat(randomZ),
-                        duration: 0.5))
+                    diceArray.append(diceNode)
+                    
+                    
+                    sceneView.scene.rootNode.addChildNode(diceNode)
+                    roll(dice: diceNode)
+                    
                 }
             }
         }
     }
     
+    func rollAll () {
+        if !diceArray.isEmpty {
+            for dice in diceArray{
+                roll(dice: dice)
+            }
+        }
+    }
+    
+    func roll (dice: SCNNode) {
+        // animate to roll and show the random value of dice
+        let randomX = Float(arc4random_uniform(4) + 1) * (Float.pi/2)
+        let randomZ = Float(arc4random_uniform(4) + 1) * (Float.pi/2)
+        
+        dice.runAction(SCNAction.rotateBy(
+            // multiplying by 5 gives more rotations for animation
+            x: CGFloat(randomX * 5),
+            y: 0,
+            z: CGFloat(randomZ * 5),
+            duration: 0.5))
+    }
+    
+    
+    // refresh button
+    @IBAction func rollAgain(_ sender: UIBarButtonItem) {
+        rollAll()
+    }
+    
+    //phone shake action
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        rollAll()
+    }
+    
+    // remove button
+    @IBAction func removeAllDice(_ sender: UIBarButtonItem) {
+        if !diceArray.isEmpty{
+            for dice in diceArray{
+                dice.removeFromParentNode()
+            }
+        }
+    }
     
     //setting up the horizontal plane
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
